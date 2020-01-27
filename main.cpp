@@ -74,9 +74,8 @@ class Vector
     	template<typename U>
     	auto operator-(const Vector<U>& v2) -> Vector<std::decay_t<decltype((*this).data[0] + v2.data[0])>>{
     		std::cout << "Minus operator" << std::endl;
-        	if(length != v2.length){
+        	if(length != v2.length)
         		throw std::invalid_argument( "Vectors have different length" );
-        	}
         	Vector<std::decay_t<decltype((*this).data[0] + v2.data[0])>> output(length);
         	for(int i = 0 ; i < length ; i++){
             	output.data[i] = data[i] - v2.data[i];
@@ -116,8 +115,14 @@ auto operator*(T scalar, Vector<U> & v) {
 
 template<typename T>
 T dot(const Vector<T>& lhs, const Vector<T>& rhs)
-{
-    
+{	
+	T result = 0;
+	if(lhs.length != rhs.length)
+        	throw std::invalid_argument( "Vectors have different length" );
+    for(int i = 0 ; i < lhs.length ; i++){
+    	result += lhs.data[i]*rhs.data[i];
+    }
+    return result;
 }
 
 
@@ -152,6 +157,14 @@ int main(){
 	v8.printData();
 	auto v9 = 2.1*a1;
 	v9.printData();
+
+	Vector<int> v10 = {1,2,3};
+	Vector<int> v11 = {1,2,3};
+	std::cout << "Dot" << std::endl;
+	std::cout << dot(v10,v11) << std::endl;
+	
+
+
 
 
 	return 0;
