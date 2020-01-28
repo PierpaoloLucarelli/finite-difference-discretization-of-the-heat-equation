@@ -1,4 +1,5 @@
 #include <iostream>
+#include<cmath>
 #include <stdexcept>
 #include <map> 
 #include <array>
@@ -119,6 +120,7 @@ auto operator*(T scalar, Vector<U> & v) {
 template<typename T>
 T dot(const Vector<T>& lhs, const Vector<T>& rhs)
 {	
+	std::cout << "Dot" << std::endl;
 	T result = 0;
 	if(lhs.length != rhs.length)
         	throw std::invalid_argument( "Vectors have different length" );
@@ -151,6 +153,13 @@ class Matrix{
 			}
 			return data[index];
 		}
+
+		void printData(){
+			for (auto const& x : data){
+    			std::cout << "[" << x.first[0] << "," << x.first[1] << "]: "
+              	<< x.second << std::endl ;
+            }
+		}
 };
 
 template<typename T>
@@ -177,7 +186,7 @@ int cg(const Matrix<T> &A, Vector<T> &b, Vector<T> &x, T tol, int maxiter)
    		auto rr = dot(r,r);
 		auto alpha = rr/dot((A_p), p);
 		x = x + alpha*p;
-		r = alpha*A_p;
+		r = r-alpha*A_p;
 
 		if (dot(r, r) < tol*tol){
 			std::cout << "Found the solution" << std::endl;
@@ -188,6 +197,38 @@ int cg(const Matrix<T> &A, Vector<T> &b, Vector<T> &x, T tol, int maxiter)
    }
    return 0;
 }
+
+
+template <int n, typename T>
+class Heat
+{
+	public:
+		double alpha;
+		int m;
+		double dt;
+		double dx;
+		Matrix<T> M;
+		Heat(double alpha_, int m_, double dt_): alpha(alpha_), m(m_), dt(dt_),M(pow(m,n),pow(m,n)){
+			dx = double(1)/(m+1);	
+			for(int j = 0 ; j < pow(m,n) ; j++){
+				// iterate each row of M matrix
+				for(int k = 0 ; k < n ; k++){
+					// each dimention
+					int right = j+pow(m,k);
+					std::cout << "right: " << right << std::endl;
+					int left = j-pow(m,k);
+					if(right > 0 && right <= pow(m,n))// 0 < x<m^n
+						std::cout << "right is ok" << std::endl;
+					std::cout << dx << std::endl;
+						M[{j,right}]=1-1*(dt/pow(dx,2))*alpha;
+						// M[{j,right}]=dx*dx;
+					if(left > 0 && left <= pow(m,n))// 0 < x<m^n
+						M[{j,left}]=1-1*(dt/pow(dx,2))*alpha;
+				}
+				M[{j,j}]=1+2*(dt/pow(dx,2))*alpha; 
+			}
+		}
+};
 
 
 int main(){
@@ -225,21 +266,26 @@ int main(){
 
 	// std::cout << dot(v10,v11) << std::endl;
 
-	Matrix<double> M(2,2);
-	M[{0,0}]=4;
-	M[{0,1}]=1;
-	M[{1,0}]=1;
-	M[{1,1}]=3;
+	// Matrix<double> M(2,2);
+	// M[{0,0}]=4;
+	// M[{0,1}]=1;
+	// M[{1,0}]=1;
+	// M[{1,1}]=3;
 
 	
 
-	Vector<double> b = { 1,2 };
-	Vector<double> x = { 2,1};
-	// b.printData();
-	Vector<double> r = M*b;
-	r.printData();
-	cg<double>(M, b, x, 10, 2);
-	x.printData();
+	// Vector<double> b = { 1,2 };
+	// Vector<double> x = { 2,1};
+	// // b.printData();
+	// Vector<double> r = M*b;
+	// r.printData();
+	// cg<double>(M, b, x, 0.02, 1000);
+	// x.printData();
+
+	Heat<1,double> h(0.3125, 3, 0.1);
+	h.M.printData();
+	std::cout << h.M.rows << std::endl;
+
 
 
 
