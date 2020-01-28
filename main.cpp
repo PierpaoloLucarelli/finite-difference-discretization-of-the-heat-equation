@@ -181,7 +181,7 @@ int cg(const Matrix<T> &A, Vector<T> &b, Vector<T> &x, T tol, int maxiter)
 
 		if (dot(r, r) < tol*tol){
 			std::cout << "Found the solution" << std::endl;
-       		break;
+       		return 1;
 		}
        	auto beta  = dot(r, r) / rr;
        	p = r + beta*p;
