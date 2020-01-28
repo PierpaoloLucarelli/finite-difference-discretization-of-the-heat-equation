@@ -1,5 +1,8 @@
 #include <iostream>
 #include <stdexcept>
+#include <map> 
+#include <array>
+#include <type_traits>
 
 template <typename T>
 class Vector
@@ -14,7 +17,7 @@ class Vector
 		}
 
 		// With length
-		Vector(int length_): data(new T[length_]),length(length_){
+		Vector(int length_): data(new T[length_]()),length(length_){
 		}	
 
 		// With init list
@@ -83,7 +86,7 @@ class Vector
         	return output;
     	}
 
-    	template<typename U>
+    	template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value, U>::type>
     	auto operator*(const U scalar) -> Vector<std::decay_t<decltype((*this).data[0]*scalar)>>{
     		std::cout << "* operator" << std::endl;
     		Vector<std::decay_t<decltype((*this).data[0]*scalar)>>output(length);
@@ -107,7 +110,7 @@ class Vector
     	}
 };
 
-template <typename T, typename U>
+template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type,typename U>
 auto operator*(T scalar, Vector<U> & v) {
 	auto temp = v*scalar;
     return temp;
@@ -126,43 +129,95 @@ T dot(const Vector<T>& lhs, const Vector<T>& rhs)
 }
 
 
+template<typename T>
+class Matrix{
+	public:
+		const int rows;
+		const int columns;
+		// using Pair = std::array<int, 2>; 
+		std::map<std::array<int, 2>,T> data; 
+
+		Matrix():rows(0),columns(0), data(nullptr){}
+
+		Matrix(int rows_, int columns_): rows(rows_),columns(columns_){
+			
+		}
+
+		// not sure if this is implemented correctly
+		T& operator[] (std::array<int, 2> index){
+			auto it = data.find(index);
+			if(it == data.end()){
+				std::cout << "item not found" << std::endl;
+			}
+			return data[index];
+		}
+};
+
+template<typename T>
+Vector<T> operator*(const Matrix<T>& lhs, const Vector<T>& rhs)
+{
+    std::cout << "matrix vector multiplication" << std::endl;
+   	Vector<T> output(lhs.rows);
+   	output.printData();
+	for (auto const& x : lhs.data)
+	{
+		std::array<int, 2> key = x.first;
+		T value = x.second;
+		output.data[key[0]] += value*rhs.data[key[1]];
+	}
+    return output;
+}
+
 
 int main(){
 
-	Vector<int> v = Vector<int>({1,2,3,4});
+	// Vector<int> v = Vector<int>({1,2,3,4});
 
 
 
-	Vector<int> a(5);
-	Vector<int> b = { 1, 2, 3, 4 };
-	Vector<int> c = { 1, 2, 3, 4 ,5};
+	// Vector<int> a(5);
+	// Vector<int> b = { 1, 2, 3, 4 };
+	// Vector<int> c = { 1, 2, 3, 4 ,5};
 
-	Vector<int>d(b);
-	a=b;
-	a.printData();
+	// Vector<int>d(b);
+	// a=b;
+	// a.printData();
 
-	Vector<int> v5;
-	v5 = std::move(c);
-	v5.printData();
-	c.printData();
+	// Vector<int> v5;
+	// v5 = std::move(c);
+	// v5.printData();
+	// c.printData();
 
-	Vector<int> a1 = { 1, 2, 3, 4 };
+	// Vector<int> a1 = { 1, 2, 3, 4 };
 	// Vector<double> a2 = { 1.1, 2.1, 3.1, 4.1 };
-	Vector<double> a2 = { 1.1, 2.1, 3.1, 4.1 };
-	auto v6 = a1+a2;
-	v6.printData();
-	auto v7 = a1-a2;
-	v7.printData();
-	auto v8 = a1*2.1;
-	v8.printData();
-	auto v9 = 2.1*a1;
-	v9.printData();
+	// auto v6 = a1+a2;
+	// v6.printData();
+	// auto v7 = a1-a2;
+	// v7.printData();
+	// auto v8 = a1*2.1;
+	// v8.printData();
+	// auto v9 = 2.1*a1;
+	// v9.printData();
 
-	Vector<int> v10 = {1,2,3};
-	Vector<int> v11 = {1,2,3};
-	std::cout << "Dot" << std::endl;
-	std::cout << dot(v10,v11) << std::endl;
-	
+	// Vector<int> v10 = {1,2,3};
+	// Vector<int> v11 = {1,2,3};
+
+	// std::cout << dot(v10,v11) << std::endl;
+
+	Matrix<int> M(3,3);
+	M[{0,0}]=1;
+	M[{1,0}]=1;
+	M[{1,1}]=1;
+	M[{2,0}]=2;
+	M[{2,2}]=1;
+
+	Vector<int> b = { 1,2,1 };
+	// b.printData();
+	Vector<int> r = M*b;
+	r.printData();
+
+
+
 
 
 
