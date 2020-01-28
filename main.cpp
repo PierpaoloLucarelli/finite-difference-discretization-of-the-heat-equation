@@ -158,7 +158,6 @@ Vector<T> operator*(const Matrix<T>& lhs, const Vector<T>& rhs)
 {
     std::cout << "matrix vector multiplication" << std::endl;
    	Vector<T> output(lhs.rows);
-   	output.printData();
 	for (auto const& x : lhs.data)
 	{
 		std::array<int, 2> key = x.first;
@@ -166,6 +165,28 @@ Vector<T> operator*(const Matrix<T>& lhs, const Vector<T>& rhs)
 		output.data[key[0]] += value*rhs.data[key[1]];
 	}
     return output;
+}
+
+template<typename T>
+int cg(const Matrix<T> &A, Vector<T> &b, Vector<T> &x, T tol, int maxiter)
+{
+   Vector<T> r = b - (A*x);
+   Vector<T> p = r;
+   for(int k = 0 ; k < maxiter ; k++){
+   		Vector<T> A_p = A*p;
+   		auto rr = dot(r,r);
+		auto alpha = rr/dot((A_p), p);
+		x = x + alpha*p;
+		r = alpha*A_p;
+
+		if (dot(r, r) < tol*tol){
+			std::cout << "Found the solution" << std::endl;
+       		break;
+		}
+       	auto beta  = dot(r, r) / rr;
+       	p = r + beta*p;
+   }
+   return 0;
 }
 
 
@@ -204,17 +225,20 @@ int main(){
 
 	// std::cout << dot(v10,v11) << std::endl;
 
-	Matrix<int> M(3,3);
-	M[{0,0}]=1;
+	Matrix<int> M(2,2);
+	M[{0,0}]=4;
+	M[{0,1}]=1;
 	M[{1,0}]=1;
-	M[{1,1}]=1;
-	M[{2,0}]=2;
-	M[{2,2}]=1;
+	M[{1,1}]=3;
 
-	Vector<int> b = { 1,2,1 };
+	
+
+	Vector<int> b = { 1,2 };
+	Vector<int> x = { 2,1};
 	// b.printData();
 	Vector<int> r = M*b;
 	r.printData();
+	cg(M, b, x, 10, 2);
 
 
 
