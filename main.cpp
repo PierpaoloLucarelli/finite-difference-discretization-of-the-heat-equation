@@ -196,15 +196,15 @@ int main(){
 
 
 
-	// Vector<int> a(5);
-	// Vector<int> b = { 1, 2, 3, 4 };
-	// Vector<int> c = { 1, 2, 3, 4 ,5};
+	// Vector<double> a(5);
+	// Vector<double> b = { 1, 2, 3, 4 };
+	// Vector<double> c = { 1, 2, 3, 4 ,5};
 
-	// Vector<int>d(b);
+	// Vector<double>d(b);
 	// a=b;
 	// a.printData();
 
-	// Vector<int> v5;
+	// Vector<double> v5;
 	// v5 = std::move(c);
 	// v5.printData();
 	// c.printData();
@@ -225,7 +225,7 @@ int main(){
 
 	// std::cout << dot(v10,v11) << std::endl;
 
-	Matrix<int> M(2,2);
+	Matrix<double> M(2,2);
 	M[{0,0}]=4;
 	M[{0,1}]=1;
 	M[{1,0}]=1;
@@ -233,12 +233,13 @@ int main(){
 
 	
 
-	Vector<int> b = { 1,2 };
-	Vector<int> x = { 2,1};
+	Vector<double> b = { 1,2 };
+	Vector<double> x = { 2,1};
 	// b.printData();
-	Vector<int> r = M*b;
+	Vector<double> r = M*b;
 	r.printData();
-	cg(M, b, x, 10, 2);
+	cg<double>(M, b, x, 10, 2);
+	x.printData();
 
 
 
