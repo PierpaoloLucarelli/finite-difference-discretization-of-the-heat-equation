@@ -148,9 +148,6 @@ class Matrix{
 		// not sure if this is implemented correctly
 		T& operator[] (std::array<int, 2> index){
 			auto it = data.find(index);
-			if(it == data.end()){
-				std::cout << "item not found" << std::endl;
-			}
 			return data[index];
 		}
 
@@ -217,12 +214,10 @@ class Heat
 					int right = j+pow(m,k);
 					std::cout << "right: " << right << std::endl;
 					int left = j-pow(m,k);
-					if(right > 0 && right <= pow(m,n))// 0 < x<m^n
-						std::cout << "right is ok" << std::endl;
-					std::cout << dx << std::endl;
+					std::cout << "left: " << left << std::endl;
+					if(right >= 0 && right < pow(m,n))// 0 < x<m^n
 						M[{j,right}]=1-1*(dt/pow(dx,2))*alpha;
-						// M[{j,right}]=dx*dx;
-					if(left > 0 && left <= pow(m,n))// 0 < x<m^n
+					if(left >= 0 && left < pow(m,n))// 0 < x<m^n
 						M[{j,left}]=1-1*(dt/pow(dx,2))*alpha;
 				}
 				M[{j,j}]=1+2*(dt/pow(dx,2))*alpha; 
@@ -282,7 +277,7 @@ int main(){
 	// cg<double>(M, b, x, 0.02, 1000);
 	// x.printData();
 
-	Heat<1,double> h(0.3125, 3, 0.1);
+	Heat<2,double> h(0.3125, 3, 0.1);
 	h.M.printData();
 	std::cout << h.M.rows << std::endl;
 
