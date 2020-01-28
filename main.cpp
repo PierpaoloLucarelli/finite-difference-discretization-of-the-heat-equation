@@ -47,13 +47,11 @@ class Vector
                 	data[i] = v2.data[i];
             	}
         	}
-        	std::cout <<  "Copy operator" << std::endl;
         	return *this;
 		}
 
 		// Move operator
 		Vector& operator=(Vector&& v2){
-        	std::cout << "move operator" << std::endl;
         	if(this != &v2){
             	delete[] data;
             	length = v2.length;
@@ -65,7 +63,6 @@ class Vector
     	}
     	template<typename U>
     	auto operator+(const Vector<U>& v2) -> Vector<std::decay_t<decltype((*this).data[0] + v2.data[0])>>{
-    		std::cout << "Plus operator" << std::endl;
         	if(length != v2.length){
         		throw std::invalid_argument( "Vectors have different length" );
         	}
@@ -78,7 +75,6 @@ class Vector
 
     	template<typename U>
     	auto operator-(const Vector<U>& v2) -> Vector<std::decay_t<decltype((*this).data[0] + v2.data[0])>>{
-    		std::cout << "Minus operator" << std::endl;
         	if(length != v2.length)
         		throw std::invalid_argument( "Vectors have different length" );
         	Vector<std::decay_t<decltype((*this).data[0] + v2.data[0])>> output(length);
@@ -90,7 +86,6 @@ class Vector
 
     	template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value, U>::type>
     	auto operator*(const U scalar) -> Vector<std::decay_t<decltype((*this).data[0]*scalar)>>{
-    		std::cout << "* operator" << std::endl;
     		Vector<std::decay_t<decltype((*this).data[0]*scalar)>>output(length);
     		for(int i = 0 ; i < length ; i++){
             	output.data[i] = data[i] * scalar;
@@ -121,7 +116,6 @@ auto operator*(T scalar, Vector<U> & v) {
 template<typename T>
 T dot(const Vector<T>& lhs, const Vector<T>& rhs)
 {	
-	std::cout << "Dot" << std::endl;
 	T result = 0;
 	if(lhs.length != rhs.length)
         	throw std::invalid_argument( "Vectors have different length" );
@@ -163,7 +157,6 @@ class Matrix{
 template<typename T>
 Vector<T> operator*(const Matrix<T>& lhs, const Vector<T>& rhs)
 {
-    std::cout << "matrix vector multiplication" << std::endl;
    	Vector<T> output(lhs.rows);
 	for (auto const& x : lhs.data)
 	{
@@ -187,7 +180,6 @@ int cg(const Matrix<T> &A, Vector<T> &b, Vector<T> &x, T tol, int maxiter)
 		r = r-alpha*A_p;
 
 		if (dot(r, r) < tol*tol){
-			std::cout << "Found the solution" << std::endl;
        		return k;
 		}
        	auto beta  = dot(r, r) / rr;
@@ -233,6 +225,16 @@ class Heat
 			return result;
 		}
 
+
+		Vector<T> solve(T t) const{
+			Vector<T> wl = exact(0);
+			Vector<T> wl1(pow(m,n));
+			for(double t_ = dt ; t_ < t ; t_+=dt){
+				cg<double>(M, wl, wl1, 0.02, 1000);
+			}
+			return wl;
+		}
+
 		Vector<int> mapIndexToVector(int num) const{
 			Vector<int> result(n);
 			if(num < pow(m,n)){
@@ -258,6 +260,8 @@ class Heat
 				return exp(-n*pow(M_PI,2)*alpha*t)*getU(x,0);
 			}
 		}
+
+
 };
 
 
@@ -323,6 +327,7 @@ int heat_tests(){
 	std::cout << "Testing heat equation solution" << std::endl;
 
 	std::cout << "" << std::endl;
+	return 1;
 }
 
 
@@ -364,7 +369,7 @@ int main(){
 
 
 	Heat<3,double> h(0.3125, 3, 0.1);
-	Vector<double> r = h.exact(10);
+	Vector<double> r = h.solve(10);
 	r.printData();
 
 
