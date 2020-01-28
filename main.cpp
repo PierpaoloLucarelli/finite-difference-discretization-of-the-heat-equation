@@ -223,27 +223,55 @@ class Heat
 			}
 		}
 
-		Vector<T> exact(T t) const{
-			// Vector<T> x(n);
-			// double ux0 = 1;
-			// for(int i = 0 ; i < n ; i++){
-			// 	ux0 = ux0*sin(M_PI*x.data[i]);
-			// }
+		// Vector<T> exact(T t) const{
+		// 	// Vector<T> x(n);
+		// 	// double ux0 = 1;
+		// 	// for(int i = 0 ; i < n ; i++){
+		// 	// 	ux0 = ux0*sin(M_PI*x.data[i]);
+		// 	// }
 
-			// vector<T> uxt = exp(-n*pow(M_PI,2)*alpha*t)*ux0;
-			// return uxt;
+		// 	// vector<T> uxt = exp(-n*pow(M_PI,2)*alpha*t)*ux0;
+		// 	// return uxt;
 
-			Vector<T> x(n);
-		}
+		// 	for(int j = 0 ; j < pow(m,n) ; j++){
+		// 		for(int i = 0 ; i < n ; i++){
+
+		// 		}
+		// 	}
+		// }
 
 
-		Vector<T> solve(T t) const{
-			Vector<T> wl = 
-			cg<double>(M, b, x, 0.02, 1000)
-			for(int i = 0 ; i < t ; i++){
+		// Vector<T> solve(T t) const{
+		// 	for(int i = 0 ; i < t ; i++){
 
+		// 	}
+		// }
+
+		Vector<int> mapIndexToVector(int num){
+			Vector<int> result(n);
+			if(num < pow(m,n)){
+				for(int i = n-1 ; i >=0 ; i--){
+					result.data[i] = floor(double(num)/pow(m,i));
+					num = num-pow(m,i);
+				}
+				return result;
+			} else{
+				std::cout << "Out of bounds" << std::endl;
+				return result;
 			}
 		}
+
+		// double u(Vector<T>x, t){
+		// 	if(t==0){
+		// 		double result = 1;
+		// 		for(int i = 0 ; i < x.length ; i++){
+		// 			result = result*sin(M_PI*x.data[i])
+		// 		}
+		// 		return result;
+		// 	} else{
+		// 		return exp(-n*pow(M_PI,2)*alpha*t)*u(x,0);
+		// 	}
+		// }
 };
 
 
@@ -299,8 +327,8 @@ int main(){
 	// x.printData();
 
 	Heat<2,double> h(0.3125, 3, 0.1);
-	h.M.printData();
-	h.exact(0.1);
+	Vector<int> r = h.mapIndexToVector(8);
+	r.printData();
 
 
 
