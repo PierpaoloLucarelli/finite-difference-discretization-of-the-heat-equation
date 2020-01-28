@@ -223,36 +223,22 @@ class Heat
 			}
 		}
 
-		// Vector<T> exact(T t) const{
-		// 	// Vector<T> x(n);
-		// 	// double ux0 = 1;
-		// 	// for(int i = 0 ; i < n ; i++){
-		// 	// 	ux0 = ux0*sin(M_PI*x.data[i]);
-		// 	// }
+		Vector<T> exact(T t) const{
+			Vector<T> result(pow(m,n));
+			for(int j = 0 ; j < pow(m,n) ; j++){
+				Vector<int> mapping = mapIndexToVector(j);
+				Vector<T> x = mapping*dx;
+				result.data[j] = getU(x,t);
+			}
+			return result;
+		}
 
-		// 	// vector<T> uxt = exp(-n*pow(M_PI,2)*alpha*t)*ux0;
-		// 	// return uxt;
-
-		// 	for(int j = 0 ; j < pow(m,n) ; j++){
-		// 		for(int i = 0 ; i < n ; i++){
-
-		// 		}
-		// 	}
-		// }
-
-
-		// Vector<T> solve(T t) const{
-		// 	for(int i = 0 ; i < t ; i++){
-
-		// 	}
-		// }
-
-		Vector<int> mapIndexToVector(int num){
+		Vector<int> mapIndexToVector(int num) const{
 			Vector<int> result(n);
 			if(num < pow(m,n)){
 				for(int i = n-1 ; i >=0 ; i--){
 					result.data[i] = floor(double(num)/pow(m,i));
-					num = num-pow(m,i);
+					num = num-(pow(m,i)*floor(double(num)/pow(m,i)));
 				}
 				return result;
 			} else{
@@ -261,17 +247,17 @@ class Heat
 			}
 		}
 
-		// double u(Vector<T>x, t){
-		// 	if(t==0){
-		// 		double result = 1;
-		// 		for(int i = 0 ; i < x.length ; i++){
-		// 			result = result*sin(M_PI*x.data[i])
-		// 		}
-		// 		return result;
-		// 	} else{
-		// 		return exp(-n*pow(M_PI,2)*alpha*t)*u(x,0);
-		// 	}
-		// }
+		double getU(Vector<T>x, T t)const{
+			if(t==0){
+				double result = 1;
+				for(int i = 0 ; i < x.length ; i++){
+					result = result*sin(M_PI*x.data[i]);
+				}
+				return result;
+			} else{
+				return exp(-n*pow(M_PI,2)*alpha*t)*getU(x,0);
+			}
+		}
 };
 
 
@@ -326,8 +312,8 @@ int main(){
 	// cg<double>(M, b, x, 0.02, 1000);
 	// x.printData();
 
-	Heat<2,double> h(0.3125, 3, 0.1);
-	Vector<int> r = h.mapIndexToVector(8);
+	Heat<3,double> h(0.3125, 3, 0.1);
+	Vector<double> r = h.exact(10);
 	r.printData();
 
 
