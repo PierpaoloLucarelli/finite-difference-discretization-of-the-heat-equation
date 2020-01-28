@@ -4,6 +4,7 @@
 #include <map> 
 #include <array>
 #include <type_traits>
+#include <math.h>
 
 template <typename T>
 class Vector
@@ -187,12 +188,12 @@ int cg(const Matrix<T> &A, Vector<T> &b, Vector<T> &x, T tol, int maxiter)
 
 		if (dot(r, r) < tol*tol){
 			std::cout << "Found the solution" << std::endl;
-       		return 1;
+       		return k;
 		}
        	auto beta  = dot(r, r) / rr;
        	p = r + beta*p;
    }
-   return 0;
+   return -1;
 }
 
 
@@ -219,6 +220,28 @@ class Heat
 						M[{j,left}]=0-(dt/pow(dx,2)*alpha);
 				}
 				M[{j,j}]=1+2*n*(dt/pow(dx,2))*alpha;
+			}
+		}
+
+		Vector<T> exact(T t) const{
+			// Vector<T> x(n);
+			// double ux0 = 1;
+			// for(int i = 0 ; i < n ; i++){
+			// 	ux0 = ux0*sin(M_PI*x.data[i]);
+			// }
+
+			// vector<T> uxt = exp(-n*pow(M_PI,2)*alpha*t)*ux0;
+			// return uxt;
+
+			Vector<T> x(n);
+		}
+
+
+		Vector<T> solve(T t) const{
+			Vector<T> wl = 
+			cg<double>(M, b, x, 0.02, 1000)
+			for(int i = 0 ; i < t ; i++){
+
 			}
 		}
 };
@@ -277,6 +300,7 @@ int main(){
 
 	Heat<2,double> h(0.3125, 3, 0.1);
 	h.M.printData();
+	h.exact(0.1);
 
 
 
