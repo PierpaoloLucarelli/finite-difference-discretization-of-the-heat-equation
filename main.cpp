@@ -212,15 +212,13 @@ class Heat
 				for(int k = 0 ; k < n ; k++){
 					// each dimention
 					int right = j+pow(m,k);
-					std::cout << "right: " << right << std::endl;
 					int left = j-pow(m,k);
-					std::cout << "left: " << left << std::endl;
 					if(right >= 0 && right < pow(m,n))// 0 < x<m^n
-						M[{j,right}]=1-1*(dt/pow(dx,2))*alpha;
+						M[{j,right}]=0-(dt/pow(dx,2)*alpha);
 					if(left >= 0 && left < pow(m,n))// 0 < x<m^n
-						M[{j,left}]=1-1*(dt/pow(dx,2))*alpha;
+						M[{j,left}]=0-(dt/pow(dx,2)*alpha);
 				}
-				M[{j,j}]=1+2*(dt/pow(dx,2))*alpha; 
+				M[{j,j}]=1+2*n*(dt/pow(dx,2))*alpha;
 			}
 		}
 };
@@ -279,7 +277,6 @@ int main(){
 
 	Heat<2,double> h(0.3125, 3, 0.1);
 	h.M.printData();
-	std::cout << h.M.rows << std::endl;
 
 
 
