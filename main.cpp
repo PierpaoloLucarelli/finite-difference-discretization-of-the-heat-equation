@@ -261,6 +261,72 @@ class Heat
 };
 
 
+int vector_and_matrix_tests(){
+
+	std::cout << "Testing vectors and matrices" << std::endl;
+
+	Matrix<double> M(3,3);
+	M[{0,0}]=1;
+	M[{0,1}]=2;
+	M[{0,2}]=3;
+	M[{1,0}]=4;
+	M[{1,1}]=5;
+	M[{1,2}]=6;
+	M[{2,0}]=7;
+	M[{2,1}]=8;
+	M[{2,2}]=9;
+
+	Vector<double> v1 = {1,2,3};
+	Vector<double> v2 = {4,5,6};
+
+	auto v3 = v1 + v2;
+	auto v4 = v1 - v2;
+	auto v5 = 0.5 * v2;
+	auto v6 = 3 * v2;
+	auto s1 = dot(v1, v2);
+	auto v7 = M * v2;
+
+	v3.printData();
+	v4.printData();
+	v5.printData();
+	v6.printData();
+	v7.printData();
+
+	std::cout << "" << std::endl;
+	
+	return 1;
+}
+
+int cg_tests(){
+
+	std::cout << "Testing conjugate gradient" << std::endl;
+
+	Matrix<double> M(2,2);
+	M[{0,0}]=4;
+	M[{0,1}]=1;
+	M[{1,0}]=1;
+	M[{1,1}]=3;
+
+	Vector<double> b = { 1,2 };
+	Vector<double> x = { 2,1};
+	
+	cg<double>(M, b, x, 0.02, 1000);
+	x.printData();
+
+	std::cout << "" << std::endl;
+
+	return 1;
+}
+
+int heat_tests(){
+	
+	std::cout << "Testing heat equation solution" << std::endl;
+
+	std::cout << "" << std::endl;
+}
+
+
+
 int main(){
 
 	// Vector<int> v = Vector<int>({1,2,3,4});
@@ -296,29 +362,14 @@ int main(){
 
 	// std::cout << dot(v10,v11) << std::endl;
 
-	// Matrix<double> M(2,2);
-	// M[{0,0}]=4;
-	// M[{0,1}]=1;
-	// M[{1,0}]=1;
-	// M[{1,1}]=3;
-
-	
-
-	// Vector<double> b = { 1,2 };
-	// Vector<double> x = { 2,1};
-	// // b.printData();
-	// Vector<double> r = M*b;
-	// r.printData();
-	// cg<double>(M, b, x, 0.02, 1000);
-	// x.printData();
 
 	Heat<3,double> h(0.3125, 3, 0.1);
 	Vector<double> r = h.exact(10);
 	r.printData();
 
 
-
-
+	vector_and_matrix_tests();
+	cg_tests();
 
 
 
