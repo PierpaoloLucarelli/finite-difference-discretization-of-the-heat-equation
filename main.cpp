@@ -227,9 +227,15 @@ class Heat
 
 
 		Vector<T> solve(T t) const{
-			Vector<T> wl = exact(0);
+			// Vector<T> wl = exact(0);
+			Vector<T> wl(pow(m,n));
+			for(int j = 0 ; j < pow(m,n) ; j++){
+				Vector<int> mapping = mapIndexToVector(j);
+				Vector<T> x = mapping*dx;
+				wl.data[j] = getU(x,t);
+			}
 			Vector<T> wl1(pow(m,n));
-			for(double t_ = dt ; t_ < t ; t_+=dt){
+			for(double t_ = dt ; t_ <= t ; t_+=dt){
 				cg<double>(M, wl, wl1, 0.02, 1000);
 			}
 			return wl;
@@ -250,15 +256,25 @@ class Heat
 		}
 
 		double getU(Vector<T>x, T t)const{
-			if(t==0){
+			if(vectorIsOnBoundary(x)){
+				return 0;
+			} else if(t==0){
 				double result = 1;
-				for(int i = 0 ; i < x.length ; i++){
+				for(int i = 0 ; i < x.length ; i++)
 					result = result*sin(M_PI*x.data[i]);
-				}
 				return result;
 			} else{
 				return exp(-n*pow(M_PI,2)*alpha*t)*getU(x,0);
 			}
+		}
+
+		bool vectorIsOnBoundary(Vector<T> v) const{
+			for(int i = 0 ; i < v.length ; i++){
+				if(v.data[i] == 0 || v.data[i]==1){
+					return true;
+				}
+			}
+			return false;
 		}
 
 
@@ -369,12 +385,14 @@ int main(){
 
 
 	Heat<3,double> h(0.3125, 3, 0.1);
-	Vector<double> r = h.solve(10);
-	r.printData();
+	Vector<double> e = h.exact(10);
+	Vector<double> s = h.solve(10);
+	Vector<double> diff = e-s;
+	diff.printData();
 
 
-	vector_and_matrix_tests();
-	cg_tests();
+	// vector_and_matrix_tests();
+	// cg_tests();
 
 
 
