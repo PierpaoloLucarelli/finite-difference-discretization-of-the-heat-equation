@@ -236,7 +236,8 @@ class Heat
 			}
 			Vector<T> wl1(pow(m,n));
 			for(double t_ = dt ; t_ <= t ; t_+=dt){
-				cg<double>(M, wl, wl1, 0.02, 1000);
+				cg<double>(M, wl, wl1, 0.02, 1);
+				wl = wl1;
 			}
 			return wl;
 		}
@@ -386,9 +387,12 @@ int main(){
 
 	Heat<3,double> h(0.3125, 3, 0.1);
 	Vector<double> e = h.exact(10);
-	Vector<double> s = h.solve(10);
-	Vector<double> diff = e-s;
-	diff.printData();
+	Heat<3,double> h2(0.3125, 3, 0.1);
+	Vector<double> s = h2.solve(10);
+	// Vector<double> diff = e-s;
+	e.printData();
+	s.printData();
+
 
 
 	// vector_and_matrix_tests();
