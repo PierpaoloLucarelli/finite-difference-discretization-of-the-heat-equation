@@ -236,7 +236,7 @@ class Heat
 			}
 			Vector<T> wl1(pow(m,n));
 			for(double t_ = dt ; t_ <= t ; t_+=dt){
-				cg<double>(M, wl, wl1, 0.02, 1);
+				cg<double>(M, wl, wl1, 0.02, 1000);
 				wl = wl1;
 			}
 			return wl;
@@ -246,7 +246,7 @@ class Heat
 			Vector<int> result(n);
 			if(num < pow(m,n)){
 				for(int i = n-1 ; i >=0 ; i--){
-					result.data[i] = floor(double(num)/pow(m,i));
+					result.data[i] = (floor(double(num)/pow(m,i)))+1;
 					num = num-(pow(m,i)*floor(double(num)/pow(m,i)));
 				}
 				return result;
@@ -342,7 +342,15 @@ int cg_tests(){
 int heat_tests(){
 	
 	std::cout << "Testing heat equation solution" << std::endl;
-
+	Heat<3,double> h(0.3125, 3, 0.1);
+	Vector<double> e = h.exact(10);
+	std::cout << "Exact" << std::endl;
+	Heat<3,double> h2(0.3125, 3, 0.1);
+	Vector<double> s = h2.solve(10);
+	e.printData();
+	std::cout << "" << std::endl;
+	std::cout << "Solve" << std::endl;
+	s.printData();
 	std::cout << "" << std::endl;
 	return 1;
 }
@@ -385,18 +393,19 @@ int main(){
 	// std::cout << dot(v10,v11) << std::endl;
 
 
-	Heat<3,double> h(0.3125, 3, 0.1);
-	Vector<double> e = h.exact(10);
-	Heat<3,double> h2(0.3125, 3, 0.1);
-	Vector<double> s = h2.solve(10);
-	// Vector<double> diff = e-s;
-	e.printData();
-	s.printData();
+	// Heat<3,double> h(0.3125, 3, 0.1);
+	// Vector<double> e = h.exact(10);
+	// Heat<3,double> h2(0.3125, 3, 0.1);
+	// Vector<double> s = h2.solve(10);
+	// // Vector<double> diff = e-s;
+	// e.printData();
+	// s.printData();
 
 
 
-	// vector_and_matrix_tests();
-	// cg_tests();
+	vector_and_matrix_tests();
+	cg_tests();
+	heat_tests();
 
 
 
