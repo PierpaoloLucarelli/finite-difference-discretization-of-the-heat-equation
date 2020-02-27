@@ -19,7 +19,7 @@ class Vector
 		}
 
 		// With length
-		Vector(int length_): data(new T[length_]()),length(length_){
+		Vector(int length_): length(length_),data(new T[length_]()){
 		}	
 
 		// With init list
@@ -71,6 +71,14 @@ class Vector
             	output.data[i] = data[i] + v2.data[i];
         	}
         	return output;
+    	}
+
+    	double norm(){
+    		double sum = 0;
+    		for(int i = 0 ; i < length ; i++){
+            	sum = sum + pow(data[i],2);
+        	}
+        	return sqrt(sum);
     	}
 
     	template<typename U>
@@ -225,6 +233,10 @@ class Heat
 			return result;
 		}
 
+		void inspectMatrix(){
+			M.printData();
+		}
+
 
 		Vector<T> solve(T t) const{
 			// Vector<T> wl = exact(0);
@@ -236,7 +248,7 @@ class Heat
 			}
 			Vector<T> wl1(pow(m,n));
 			for(double t_ = dt ; t_ <= t ; t_+=dt){
-				cg<double>(M, wl, wl1, 0.02, 1000);
+				cg<double>(M, wl, wl1, 0.1, 1000);
 				wl = wl1;
 			}
 			return wl;
@@ -339,19 +351,23 @@ int cg_tests(){
 	return 1;
 }
 
-int heat_tests(){
+int heat_tests(double alpha, int m, double dt, int t){
 	
 	std::cout << "Testing heat equation solution" << std::endl;
-	Heat<3,double> h(0.3125, 3, 0.1);
-	Vector<double> e = h.exact(10);
+	Heat<2,double> h(alpha, m, dt);
+	Vector<double> e = h.exact(t);
 	std::cout << "Exact" << std::endl;
-	Heat<3,double> h2(0.3125, 3, 0.1);
-	Vector<double> s = h2.solve(10);
+	Heat<2,double> h2(alpha, m, dt);
+	Vector<double> s = h2.solve(t);
 	e.printData();
 	std::cout << "" << std::endl;
 	std::cout << "Solve" << std::endl;
 	s.printData();
 	std::cout << "" << std::endl;
+
+	std::cout << "difference betwen solutions" << std::endl;
+	Vector<double> err = e-s;
+	std::cout << err.norm() << std::endl;
 	return 1;
 }
 
@@ -405,7 +421,7 @@ int main(){
 
 	vector_and_matrix_tests();
 	cg_tests();
-	heat_tests();
+	heat_tests(0.3125, 3, 0.1, 1);
 
 
 
